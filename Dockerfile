@@ -5,8 +5,7 @@ ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
 COPY requirements.txt . 
-COPY app.py . 
-COPY templates ./templates 
+COPY app .
 
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
