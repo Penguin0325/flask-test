@@ -1,5 +1,5 @@
 FROM python:3.10.6
-WORKDIR /code
+WORKDIR /code/app
 
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0

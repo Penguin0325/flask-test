@@ -7,16 +7,28 @@ services:
     tty: true
     ports:
       - "8000:5000"
-  db:
-    image: mariadb:latest
-    volumes:
-      -  ./dbdata:/var/lib/mysql
+    depends_on:
+      mysql:
+        condition: service_healthy
+        # mysqlが立ち上がらないと、appも動かないように設定
+  
+  mysql:
+    image: mysql
+    platform: linux/amd64
+    container_name: mysql-container
     ports:
-        - "3308:3308"
-    expose:
-        - "3308"
-    restart: always
+      - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: "hoge"
-volumes:
-  dbdata:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: demo
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ./database/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+      # mysqlがappより先に動くように設定
